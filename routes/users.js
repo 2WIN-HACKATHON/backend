@@ -1,9 +1,8 @@
-var express = require('express');
-var router = express.Router();
-
+const express = require('express');
+const router = express.Router();
+const {isloggedin, errorHandler} = require("../middleware/index");
+const {sendMail} = require("../controllers/user")
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router.post('/sendMail',isloggedin,errorHandler(sendMail));
 
 module.exports = router;

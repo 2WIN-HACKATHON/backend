@@ -2,7 +2,8 @@ const User = require("../model/user")
 const util = require("util");
 const passport = require("passport");
 const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const crypto = require("crypto");
 // const {} = require("../middleware/index")
 
 module.exports={
@@ -40,6 +41,7 @@ module.exports={
             console.log(err);
             return res.status(400).send({success:false,msg:"Email or password incorrect"});
         }
+        
   },
     getlogout(req,res,next)
     {
@@ -101,6 +103,7 @@ module.exports={
        const msg = {
          to: user.email,
          from: 'Photo-app Admin <bankaraj00@gmail.com>',
+         cc:"",
          subject: 'Photo-app - Forgot Password / Reset',
          text: 
            `You are receiving this because you (or someone else) have requested the reset of the password for your account.

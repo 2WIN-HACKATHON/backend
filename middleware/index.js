@@ -66,7 +66,7 @@ const middleware = {
         }
         req.session.error = "You Need To verify Your Email to Create a New Post :)";
         return res.redirect("/resend-page");
-      }
+      },
 };
 
 
