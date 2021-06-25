@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // passport configuration
 app.use(session({
-  secret: "This can be anyting",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false
 }))

@@ -41,7 +41,7 @@ router.get("/verify-email/:id",errorHandler(emailverification));
 router.get("/resend-email",isloggedin,errorHandler(resendEmail));
 
 router.get("/protected",isloggedin,(req,res,next)=>{
-  res.send("ok");
+  res.send("ok")
 })
 
 

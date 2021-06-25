@@ -1,7 +1,9 @@
 const User = require("../model/user")
 const util = require("util");
 const passport = require("passport");
-const {} = require("../middleware/index")
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+// const {} = require("../middleware/index")
 
 module.exports={
    async postregister(req,res,next){
@@ -55,38 +57,27 @@ module.exports={
    },
    async updateProfile(req,res,next){
 
-    const {username,email,firstName,lastName,bio,tagline} = req.body;
+    const {username,email,firstName,lastName} = req.body;
     const {user} = res.locals;
 
     if(username) user.username = username;
     if(email) user.email = email;
     if(firstName) user.firstName = firstName;
     if(lastName) user.lastName = lastName;
-    user.bio = bio;
-    user.tagline = tagline;
-
-    if(req.file)
-    {
-      if(user.image.public_id) await cloudinary.uploader.destroy(user.image.public_id);
-      const {path,filename} =req.file;
-      user.image = {secure_url:path,public_id:filename};
-    }
     try {
         await user.save();
-        // now since credentials are changed we need to log user in we can use simple req.login but it will not return promise it only takes callback
         const login = util.promisify(req.login.bind(req));
-        // we req.login requires use of req but since we are storing the promise inside a variable we will loose req object so we use bind methd bind req to user it is like this
         await login(user);
-        req.session.success = "Profile updated";
-        res.redirect("/profile")
+        return res.status(200).send({success:true,msg:"Profile successfully updated"});
     } catch (err) {
         let error =err.message;
+        console.log(error);
         if(error.includes("duplicate")&&error.includes("index: email_1 dup key")){
             error = "User with Email already exists";
         }else{
             error = "UserName Already Taken";
         }
-     return res.render("profile",{error})
+     return res.status(400).send({success:false,error});
     }
 
   },
@@ -95,14 +86,12 @@ module.exports={
      const token = crypto.randomBytes(20).toString('hex');
      const user = await User.findOne({ email: req.body.email })
        if (!user) {
-         req.session.error = 'No account with that email address exists.';
-         return res.redirect('/forgot-password');
-       }
+         return res.status(400).send({success:false,msg:'No account with that email address exists.'});
+        }
        if(user.googleId)
        {
-        req.session.error = 'You Previously Signed Up with Google';;
-        return res.redirect('/forgot-password');
-       }
+        return res.status(400).send({success:false,msg:'You Previously Signed Up with Google'});
+    }
 
        user.resetPasswordToken = token;
        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
@@ -120,8 +109,7 @@ module.exports={
            If you did not request this, please ignore this email and your password will remain unchanged.`.replace(/           /g, '')
        };
        await sgMail.send(msg);
-       req.session.success = `An e-mail has been sent to ${user.email} with further instructions.`;
-       res.redirect('/forgot-password');
+       return res.status(200).send({success:true,msg:`An e-mail has been sent to ${user.email} with further instructions.`})
   },
   async putReset(req, res, next) {
     const { token } = req.params;
