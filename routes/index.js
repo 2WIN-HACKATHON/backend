@@ -18,9 +18,6 @@ router.put('/profile',isloggedin,errorHandler(isvalidPassword),errorHandler(chan
 /* put Forgot-pwd */
 router.put('/forgot-password',errorHandler(putforgotPwd));
 
-/* get reset-token */
-router.get('/reset/:token',errorHandler(getReset));
-
 /* put reset-tooken */
 router.put('/reset/:token',errorHandler(putReset));
 
