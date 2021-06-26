@@ -13,7 +13,7 @@ const mailSchema = new mongoose.Schema({
         text:String
       },
     sechuledAt:{type:Date ,default:Date.now},
-});
+},{timestamps:true});
 
 
 module.exports = mongoose.model("Mail",mailSchema);

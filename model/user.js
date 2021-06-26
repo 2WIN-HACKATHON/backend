@@ -8,7 +8,7 @@ var userschema = new mongoose.Schema({
     googleId:String,
     firstName:String,
     lastName:String,
-})
+},{timestamps:true})
 
 userschema.plugin(passportlocalmongoose, {
     usernameField: 'email'
