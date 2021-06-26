@@ -1,13 +1,19 @@
 const mongoose = require("mongoose");
-
-const mailStatus = new mongoose.Schema({
+// add the logic when is the mail scheduled like every week , sec etc
+const mailSchema = new mongoose.Schema({
     userid:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
-    email:String,
-    sechuledAt:{type:Date , required:true},
+    mailobj:{
+        to:String,
+        from:String,
+        cc:String,
+        subject:String,
+        text:String
+      },
+    sechuledAt:{type:Date ,default:Date.now},
 });
 
 
-module.exports = mongoose.model("MailStatus",mailStatus);
+module.exports = mongoose.model("Mail",mailSchema);
