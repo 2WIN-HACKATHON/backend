@@ -97,5 +97,14 @@ module.exports = {
 
           console.log('This is the new mail which is created',newMail);
           return res.status(200).send({success:true,msg:`Job has been successfully scheduled`});
+    },
+
+    async getHistory(req,res,next){
+        const AllMails = await Mail.find({userid:req.user._id,sechuledAt:{$lte:new Date().toISOString()}});
+        return res.status(200).send({success:true,AllMails});
+    },
+    async getFuture(req,res,next){
+        const AllMails = await Mail.find({userid:req.user._id,sechuledAt:{$gt:new Date().toISOString()}});
+        return res.status(200).send({success:true,AllMails});
     }
 }
