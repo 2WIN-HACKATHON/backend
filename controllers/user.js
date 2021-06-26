@@ -20,7 +20,7 @@ async function scheduleMail(to,cc,subject,text,from){
 module.exports = {
     // schedule a cron job in future using custom time
     async sendMail(req,res,next){
-        let pattern,whichHour,whichMinute,whichSecond;
+        let pattern,whichHour,whichMinute,whichSecond,whichDayOfMonth,whichMonth;
         let {mailobj,repeates,repeatEvery,day,hour,minute,month,dayofMonth,sechuledAt} = req.body;
         if(sechuledAt){
             // console.log(new Date(sechuledAt).toISOString(),"This is the date");
@@ -61,17 +61,19 @@ module.exports = {
 
         }else if(repeates==="monthly"){
 
-                let whichMonth = Number(month) || '*' ;
-                let whichDayOfMonth = Number(dayofMonth) || 1;
+                whichMonth = Number(month) || '*' ;
+                whichDayOfMonth = Number(dayofMonth) || 1;
                 whichHour = Number(hour) || 0 // default 0 (12 am);
                 whichMinute = Number(minute) || 0 // default 0
                 // whichSecond = Number(second) // default 0
                 // whichSecond = whichSecond?`*\${whichSecond}`:'*';
                 pattern = `${whichMinute} ${whichHour} ${whichDayOfMonth} ${whichMonth} *`;
-
-
         }else if(repeates==="yearly"){
-
+            whichHour = Number(hour) || 0;
+            whichMinute = Number(minute) || 0;
+            whichDayOfMonth = Number(dayofMonth) || 1;
+            whichMonth = Number(month) || '*' ;
+            pattern = `${whichMinute} ${whichHour} ${whichDayOfMonth} ${whichMonth} *`;
         }else{
 
             throw "No you cannot Schedule task other then sec,min,monthly,yearly"

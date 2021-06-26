@@ -9,7 +9,8 @@ const passport = require("passport");
 const mongoose = require("mongoose");
 const LocalStrategy = require ('passport-local').Strategy;
 const googlestrategy = require("passport-google-oauth2").Strategy;
-
+const  cors = require('cors')
+let PRODUCTION = false;
 
 // models
 
@@ -28,6 +29,32 @@ db.on('error',console.error.bind(console,"conncetion error"));
 db.once('open',function(){
   console.log("connected")
 })
+
+var whitelist = []
+var corsOptions = {
+  methods: ['GET','PUT','POST','DELETE','OPTIONS'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  credentials: true,
+  exposedHeaders: ['Set-Cookie'],
+  allowedHeaders: ['Content-Type','Authorization', 'X-HTTP-Method-Override' ,'X-Requested-With', 'device-remember-token', 'Accept'],
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      console.log(origin,"This is origin");
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+if(PRODUCTION==false)
+{  
+  app.use(cors())
+}else{
+  app.use(cors(corsOptions))
+}
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
