@@ -13,7 +13,7 @@ async function scheduleMail(to,cc,subject,text,from){
         text
       };
       await sgMail.send(msg);
-      console.log("mail has been sent to " + to);
+      console.log("Mail has been sent to " + to);
 }
 
 
@@ -25,8 +25,11 @@ module.exports = {
         if(sechuledAt){
             // console.log(new Date(sechuledAt).toISOString(),"This is the date");
             sechuledAt = new Date(sechuledAt);
+
             const curDate = new Date();
+
             if(sechuledAt<curDate) throw "Scheduled at cannot be less than the current Date";
+
             pattern = sechuledAt
         }
         let arr = [];
@@ -98,6 +101,7 @@ module.exports = {
           const newMail = await Mail.create(req.body);
 
           console.log('This is the new mail which is created',newMail);
+
           return res.status(200).send({success:true,msg:`Job has been successfully scheduled`});
     },
 

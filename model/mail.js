@@ -12,7 +12,7 @@ const mailSchema = new mongoose.Schema({
         subject:String,
         text:String
       },
-    sechuledAt:{type:Date ,default:Date.now},
+    sechuledAt:{type:Date,required:true,default:Date.now},
 },{timestamps:true});
 
 
