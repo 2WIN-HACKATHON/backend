@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require("passport");
 const {errorHandler,isloggedin,isvalidPassword,changePassword} = require("../middleware/index")
-const {emailverification,resendEmail,googlelogin,postregister,getlogout,postlogin,userprofile,updateProfile,getForgotpwd,putforgotPwd,getReset,putReset}  = require("../controllers/index")
+const {emailverification,resendEmail,googlelogin,postregister,getlogout,postlogin,updateProfile,putforgotPwd,putReset}  = require("../controllers/index")
 
 
 /* post register */

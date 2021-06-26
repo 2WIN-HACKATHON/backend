@@ -10,6 +10,7 @@ var userschema = new mongoose.Schema({
     lastName:String,
     resetPasswordToken:String,
     resetPasswordExpires: Date,
+    isverified:{type:Boolean,default:false}
 },{timestamps:true})
 
 userschema.plugin(passportlocalmongoose, {
