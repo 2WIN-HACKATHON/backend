@@ -48,15 +48,6 @@ module.exports={
         req.logout();
         return res.status(200).send({success:true,msg:"You are successfully logged out"});
     },
-
-   async userprofile(req,res,next){
-       const user = await User.findById(req.params.id);
-       if(!user)
-       {
-         return res.status(400).send({success:false,msg:"No such user found in the db"});
-       }
-       return res.status(200).send({success:true,user});
-   },
    async updateProfile(req,res,next){
 
     const {username,email,firstName,lastName} = req.body;
@@ -102,15 +93,15 @@ module.exports={
        await user.save();
        const msg = {
          to: user.email,
-         from: 'Photo-app Admin <bankaraj00@gmail.com>',
-         cc:"",
-         subject: 'Photo-app - Forgot Password / Reset',
+         from: 'jonDoe<bankaraj00@gmail.com>',
+         subject: 'Forgot Password / Reset',
          text: 
            `You are receiving this because you (or someone else) have requested the reset of the password for your account.
            Please click on the following link, or copy and paste it into your browser to complete the process:
-           http://${req.headers.host}/reset/${token}
+           https://${req.headers.host}/reset/${token} 
            If you did not request this, please ignore this email and your password will remain unchanged.`.replace(/           /g, '')
        };
+       // give the frontend url
        await sgMail.send(msg);
        return res.status(200).send({success:true,msg:`An e-mail has been sent to ${user.email} with further instructions.`})
   },
@@ -119,13 +110,11 @@ module.exports={
     const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
     
     if (!user) {
-     req.session.error = 'Password reset token is invalid or has expired.';
-     return res.redirect(`/reset/${ token }`);
+     return res.status(400).send({success:false,msg:"Password reset token is invalid or has expired."});
     }
 
     if(req.body.password.length<6){
-        req.session.error = "Length of Password must be atleast 6";
-        return res.redirect(`/reset/${ token }`);
+        return res.status(400).send({success:false,msg:"Length of Password must be atleast 6"});
     }
   
     if(req.body.password === req.body.confirm) {
@@ -136,23 +125,20 @@ module.exports={
       const login = util.promisify(req.login.bind(req));
       await login(user);
     } else {
-      req.session.error = 'Passwords do not match.';
-      return res.redirect(`/reset/${ token }`);
+      return res.status(400).send({success:false,msg:"password don't match"});
     }
   
     const msg = {
       to: user.email,
-      from: 'Surf Shop Admin <bankaraj00@gmail.com>',
-      subject: 'Surf Shop - Password Changed',
+      from: 'john doe<bankaraj00@gmail.com>',
+      subject: 'Password Changed',
       text: `Hello,
         This email is to confirm that the password for your account has just been changed.
         If you did not make this change, please hit reply and notify us at once.`.replace(/		  	/g, '')
     };
     
     await sgMail.send(msg);
-  
-    req.session.success = 'Password successfully updated!';
-    res.redirect('/post');
+    return res.status(200).send({success:true,msg:"Password has been successfully changed"});
   },
   async googlelogin(req,res,next){
     passport.authenticate("google",(err,user,info)=>{
@@ -180,45 +166,39 @@ module.exports={
 async resendEmail(req,res,next){
   if(req.user.isverfied)
   {
-    req.session.success = "User already verified";
-    return res.redirect("/post");
+    return res.status(400).send({success:false,msg:"User already verified"});
   }
   const tokenval = new Token({userId:req.user._id, token: crypto.randomBytes(16).toString("hex")});
   await tokenval.save();
   const msg = {
    to: req.user.email,
-   from: 'Photo-app Admin <bankaraj00@gmail.com>',
+   from: 'john doe<bankaraj00@gmail.com>',
    subject: 'Email verification',
-   text:"Hello,\n\n" + "Please verify your account by clicking the link: http://" + req.headers.host + "/verify-email/" + tokenval.token +".\n"
-
+   text:"Hello,\n\n" + "Please verify your account by clicking the link: https://" + req.headers.host + "/verify-email/" + tokenval.token +".\n"
  };
+ // give frontend url
  await sgMail.send(msg);
- req.session.success = `An e-mail has been sent to ${req.user.email} with further instructions.`;
- return res.redirect("/resend-page");
- },
+ return res.status(200).send({success:false,msg:`An e-mail has been sent to ${req.user.email} with further instructions.`});
+},
  async emailverification(req,res,next){
   const token = await Token.findOne({token:req.params.id});
   if(!token)
   {
-      req.session.error = "Token is invalid or has expired Please request for a new token";
-      return res.redirect("/resend-page");
-  }
+      return res.status(400).send({success:false,msg:"Token is invalid or has expired Please request for a new token"});
+    }
   const user = await User.findOne(token.userId);
   if(!user)
   {
-      req.session.error = "No such user exists";
-      return res.redirect("/post");
+      return res.status(400).send({success:false,msg:"No such user exists"});
   }
   
   if(user.isverfied)
   {    
-      req.session.error = "Email already verified";
-      return res.redirect("/post");
+    return res.status(400).send({success:false,msg:"Email already verified"});
   }
   user.isverfied=true;
   await user.save();
-  req.session.success = "Email-Id is Successfully Verified";
-  return res.redirect(`/post`);
+  return res.status(200).send({success:false,msg:"Email-Id is Successfully Verified"});
 }
 
 }

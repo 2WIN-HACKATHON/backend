@@ -20,9 +20,7 @@ const middleware = {
           res.locals.user = user
           next();
         }else{
-           middleware.deleteProfileImage(req);
-          req.session.error = "Incorrect Current Password";
-          return res.redirect("/profile");
+          return res.status(401).send({success:false,msg:"Incorrect Current Password"});
         }
       },
   
@@ -38,34 +36,25 @@ const middleware = {
           const {user} = res.locals;
           if(newPassword.length<6)
           {
-            let error;
-            error="Password must be 6 digit long"
-            return res.render("profile",{error});
+            return res.status(400).send({success:false,msg:"Password must be 6 digit long"});
           }
           if(newPassword === passwordConfirmation)
           {
             await user.setPassword(newPassword);
             next();
           }else{
-            middleware.deleteProfileImage(req);
-            req.session.error = "Password must match";
-            return res.redirect("/profile");
+            return res.status(400).send({success:false,msg:"Password must match"});
           }
         }else{
           next();
         }
       },
       isverifiedUser(req,res,next){
-        if(req.xhr && !req.user.isverfied)
-        {
-          return res.send("resend");
-        }
         if(req.user.isverfied || req.user.googleId)
         {
           return next();
         }
-        req.session.error = "You Need To verify Your Email to Create a New Post :)";
-        return res.redirect("/resend-page");
+        return res.status(400).send({success:false,msg:"You Need To verify Your Email to continue"});
       },
 };
 

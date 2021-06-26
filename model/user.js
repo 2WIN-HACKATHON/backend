@@ -8,6 +8,8 @@ var userschema = new mongoose.Schema({
     googleId:String,
     firstName:String,
     lastName:String,
+    resetPasswordToken:String,
+    resetPasswordExpires: Date,
 },{timestamps:true})
 
 userschema.plugin(passportlocalmongoose, {

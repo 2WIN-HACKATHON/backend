@@ -12,12 +12,8 @@ router.post('/login', errorHandler(postlogin));
 /* get logout */
 router.get('/logout', getlogout);
 
-/* get public  profile */
-router.get('/user/:id',errorHandler(userprofile));
-
 /* put profile */
 router.put('/profile',isloggedin,errorHandler(isvalidPassword),errorHandler(changePassword),errorHandler(updateProfile));
-
 
 /* put Forgot-pwd */
 router.put('/forgot-password',errorHandler(putforgotPwd));
