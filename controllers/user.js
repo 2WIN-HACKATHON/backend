@@ -64,13 +64,13 @@ module.exports = {
 
         }else if(repeates==="monthly"){
 
-                whichMonth = Number(month) || '*' ;
+                // whichMonth = Number(month) || '*' ;
                 whichDayOfMonth = Number(dayofMonth) || 1;
                 whichHour = Number(hour) || 0 // default 0 (12 am);
                 whichMinute = Number(minute) || 0 // default 0
                 // whichSecond = Number(second) // default 0
                 // whichSecond = whichSecond?`*\${whichSecond}`:'*';
-                pattern = `${whichMinute} ${whichHour} ${whichDayOfMonth} ${whichMonth} *`;
+                pattern = `${whichMinute} ${whichHour} ${whichDayOfMonth} * *`;
         }else if(repeates==="yearly"){
             whichHour = Number(hour) || 0;
             whichMinute = Number(minute) || 0;
