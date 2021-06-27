@@ -6,8 +6,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const crypto = require("crypto");
 const { OAuth2Client } = require('google-auth-library')
 const client = new OAuth2Client(process.env.CLIENT_ID)
-// const {} = require("../middleware/index")
-
+const Token = require("../model/token")
 module.exports={
    async postregister(req,res,next){
        try{
@@ -25,7 +24,16 @@ module.exports={
            let user = await User.register(new User(req.body),req.body.password);
            const login =  util.promisify(req.login.bind(req));
            await login(user);
-           return res.status(200).send({success:true,msg:"You are successfully registered and logged in"});
+           const tokenval = new Token({userId:user._id,token:crypto.randomBytes(16).toString('hex')});
+           await tokenval.save();
+           const msg = {
+             to: user.email,
+             from: 'jon doe<bankaraj00@gmail.com>',
+             subject: 'Email verification',
+             text:"Hello,\n\n" + "Please verify your account by clicking the link: http://" + req.headers.host + "/verify-email/" + tokenval.token +".\n"
+           };
+           await sgMail.send(msg);
+           return res.status(200).send({success:true,msg:"Email has been sent to your account with further instructions"});
        }catch(err){
             console.log(err);
             return res.status(400).send({success:false,msg:err});
@@ -100,7 +108,7 @@ module.exports={
          text: 
            `You are receiving this because you (or someone else) have requested the reset of the password for your account.
            Please click on the following link, or copy and paste it into your browser to complete the process:
-           https://${req.headers.host}/reset/${token} 
+           http://${req.headers.host}/reset/${token} 
            If you did not request this, please ignore this email and your password will remain unchanged.`.replace(/           /g, '')
        };
        // give the frontend url
@@ -198,7 +206,7 @@ module.exports={
     // })(req,res)
   },
 async resendEmail(req,res,next){
-  if(req.user.isverfied)
+  if(req.user.isverified)
   {
     return res.status(400).send({success:false,msg:"User already verified"});
   }
@@ -212,7 +220,7 @@ async resendEmail(req,res,next){
  };
  // give frontend url
  await sgMail.send(msg);
- return res.status(200).send({success:false,msg:`An e-mail has been sent to ${req.user.email} with further instructions.`});
+ return res.status(200).send({success:true,msg:`An e-mail has been sent to ${req.user.email} with further instructions.`});
 },
  async emailverification(req,res,next){
   const token = await Token.findOne({token:req.params.id});
@@ -226,13 +234,13 @@ async resendEmail(req,res,next){
       return res.status(400).send({success:false,msg:"No such user exists"});
   }
   
-  if(user.isverfied)
+  if(user.isverified)
   {    
     return res.status(400).send({success:false,msg:"Email already verified"});
   }
-  user.isverfied=true;
+  user.isverified=true;
   await user.save();
-  return res.status(200).send({success:false,msg:"Email-Id is Successfully Verified"});
+  return res.status(200).send({success:true,msg:"Email-Id is Successfully Verified"});
 }
 
 }
