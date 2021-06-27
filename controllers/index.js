@@ -151,59 +151,48 @@ module.exports={
     return res.status(200).send({success:true,msg:"Password has been successfully changed"});
   },
   async googlelogin(req,res,next){
-    const { token }  = req.body
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.CLIENT_ID
-  });
-  console.log("data recieved from google",ticket.getPayload());
-  let data = ticket.getPayload();
-  return res.status(200).send({success:true,data});
-  const { name, email, picture } = ticket.getPayload(); 
-  const userpresent = await User.findOne({googleId})
-    if(userpresent){
-     return res.status(200).send({success:true,userpresent});
-    }else{
-      const users = await User.findOne({email});
-      if(users)
-      {
-        return res.status(400).send({success:false,msg:"Primary email already registered"});
-      }
-      var newuser = new User({
-        googleId:profile.id,
-        firstName:profile.given_name,
-        lastName:profile.family_name,
-        username:profile.given_name,
-        email
-      })
-      newuser.isverfied = true
-      await newuser.save();
-      const login = util.promisify(req.login.bind(req));
-      await login(newuser);
-      return res.status(200).send({success:true,newuser});
-    }
+  //   const { token }  = req.body
+  //   const ticket = await client.verifyIdToken({
+  //     idToken: token,
+  //     audience: process.env.CLIENT_ID
+  // });
+  // console.log("data recieved from google",ticket.getPayload());
+  // let data = ticket.getPayload();
+  // return res.status(200).send({success:true,data});
+  // const { name, email, picture } = ticket.getPayload(); 
+  // const userpresent = await User.findOne({googleId})
+  //   if(userpresent){
+  //    return res.status(200).send({success:true,userpresent});
+  //   }else{
+  //     const users = await User.findOne({email});
+  //     if(users)
+  //     {
+  //       return res.status(400).send({success:false,msg:"Primary email already registered"});
+  //     }
+  //     var newuser = new User({
+  //       googleId:profile.id,
+  //       firstName:profile.given_name,
+  //       lastName:profile.family_name,
+  //       username:profile.given_name,
+  //       email
+  //     })
+  //     newuser.isverfied = true
+  //     await newuser.save();
+  //     const login = util.promisify(req.login.bind(req));
+  //     await login(newuser);
+  //     return res.status(200).send({success:true,newuser});
+  //   }
 
-    // passport.authenticate("google",(err,user,info)=>{
-    //   // console.log("yaha aaya2")
-    //   if(!user){
-    //     // console.log(err,"Thjos os error");
-    //     // console.log(info);
-    //     req.session.error = "Primary email already registered";
-    //     return res.redirect("/login");
-    //   }else{
-    //     req.login(user,(err)=>{
-    //       if(err){
-    //         req.session.error("Something went wrong");
-    //         return res.redirect("/login");
-    //       }else{
-    //         req.session.success = "Welcome back "+user.username;
-    //         var redirect = req.session.redirectTo || "/post";
-    //         delete req.session.redirectTo;
-    //         return res.redirect(redirect);
-    //       }
-    //     })
-    //   }
-    // })(req,res)
+    passport.authenticate("google",async (err,user,info)=>{
+      if(!user){
+        return res.status(400).send({success:false,msg:"Primary user is already registered"});
+      }else{
+        const login =  util.promisify(req.login.bind(req));
+        await login(user);
+        return res.status(200).send({success:true,msg:"You are successfully logged in "});
+        
+      }
+    })(req,res)
   },
 async resendEmail(req,res,next){
   if(req.user.isverified)

@@ -29,7 +29,7 @@ router.get("/login/google",passport.authenticate("google",{
 
 router.get("/login/google/callback",errorHandler(googlelogin));
 
-router.post("/auth/google",errorHandler(googlelogin))
+// router.post("/auth/google",errorHandler(googlelogin))
 
 // resened Email 
 router.get("/verify-email/:id",errorHandler(emailverification));

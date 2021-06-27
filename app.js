@@ -109,13 +109,9 @@ passport.use(new googlestrategy({
         firstName:profile.given_name,
         lastName:profile.family_name,
         username:profile.given_name,
-        image:{
-          secure_url:profile._json.picture,
-          public_id:profile._json.sub
-        },
         email:profile._json.email,
       })
-      newuser.isverfied = true
+      newuser.isverified = true
       
      await newuser.save();
      return done(null,newuser)
