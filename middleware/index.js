@@ -13,7 +13,7 @@ const middleware = {
           res.locals.user = req.user
          return next();
         }
-        
+        if(!req.body.currentPassword) throw "currentPassword is required"
         const {user} = await User.authenticate()(req.user.email,req.body.currentPassword)
         if(user)
         {
