@@ -29,5 +29,5 @@ Mail Scheduler Made using Nodejs,express js,Mongodb,cronjs
 
 - Goto http://localhost:3000/api-docs/  
 
-- to find the list of all the api endpoints if cloned locally else https://fondbackend.herokuapp.com/api-docs
+- to find the list of all the api endpoints if cloned locally else https://twowin.herokuapp.com
 
