@@ -9,8 +9,31 @@ const passport = require("passport");
 const mongoose = require("mongoose");
 const LocalStrategy = require ('passport-local').Strategy;
 const googlestrategy = require("passport-google-oauth2").Strategy;
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const  cors = require('cors')
-let PRODUCTION = false;
+let PRODUCTION = true;
+const app = express();
+
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      version: '1.0.0',
+      title: '2Win API',
+      description: '2 WIN API Information',
+      contact: {
+        name: 'bankaraj00@gmail.com',
+      },
+      servers: ['http://localhost:3000']
+    },
+  },
+  // ['.routes/*.js']
+  apis: ['./routes/*.js'],
+};
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 
 // models
 
@@ -20,7 +43,6 @@ const User = require("./model/user")
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
-const app = express();
 
 var url = process.env.DATABASE_URL || 'mongodb://localhost:27017/Hackathon';
 mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex: true,useFindAndModify:false });
@@ -30,7 +52,7 @@ db.once('open',function(){
   console.log("connected")
 })
 
-var whitelist = ["http://localhost:3000"]
+var whitelist = ["http://localhost:3000","https://twowin.herokuapp.com"]
 var corsOptions = {
   methods: ['GET','PUT','POST','DELETE','OPTIONS'],
   preflightContinue: false,

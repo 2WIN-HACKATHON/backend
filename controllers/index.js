@@ -11,7 +11,7 @@ module.exports={
    async postregister(req,res,next){
        try{
            const{username,email} = req.body;
-           if(req.body.password.length<6)
+           if(!req.body.password || req.body.password.length<6)
            {
                error = "Password must be 6 digit long";
                return res.status(400).send({error,username,email})

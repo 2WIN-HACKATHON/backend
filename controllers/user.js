@@ -20,23 +20,24 @@ async function scheduleMail(to,cc,subject,text,from){
 module.exports = {
     // schedule a cron job in future using custom time
     async sendMail(req,res,next){
-        let pattern,whichHour,whichMinute,whichSecond,whichDayOfMonth,whichMonth;
-        let {mailobj,repeates,repeatEvery,day,hour,minute,month,dayofMonth,sechuledAt} = req.body;
+        console.log(req.body,"in sendMail");
+        let pattern,whichHour,whichMinute,whichSecond,whichDayOfMonth,whichMonth,curDate;
+        let {to,cc,subject,text,repeates,repeatEvery,day,hour,minute,month,dayofMonth,sechuledAt} = req.body;
         if(sechuledAt){
             // console.log(new Date(sechuledAt).toISOString(),"This is the date");
             sechuledAt = new Date(sechuledAt);
 
-            const curDate = new Date();
+             curDate = new Date();
 
             if(sechuledAt<curDate) throw "Scheduled at cannot be less than the current Date";
 
             pattern = sechuledAt
         }
         let arr = [];
-        if(!mailobj.to) arr.push({msg:"Reciept is required"});
-        if(!mailobj.cc) arr.push({msg:"cc is required"});
-        if(!mailobj.subject) arr.push({msg:"Subject is required"});
-        if(!mailobj.text) arr.push({msg:"Email body is required"});
+        if(!to) arr.push({msg:"Reciept is required"});
+        if(!cc) arr.push({msg:"cc is required"});
+        if(!subject) arr.push({msg:"Subject is required"});
+        if(!text) arr.push({msg:"Email body is required"});
         if(arr && arr.length > 0) throw arr;
         /* 
         1 -> sec
@@ -81,12 +82,13 @@ module.exports = {
 
             throw "No you cannot Schedule task other then sec,min,monthly,yearly"
         }
-    }
+    }       
+           pattern = pattern ?patterncurDate:
            console.log(pattern,"cron pattern");
 
            const job = new CronJob.CronJob(pattern, async function() {
 
-           await scheduleMail(mailobj.to,mailobj.cc,mailobj.subject,mailobj.text,req.user.email);
+           await scheduleMail(to,cc,subject,text,req.user.email);
 
           }, null, true, "Asia/Kolkata");  // setting the indian time zone
 
@@ -95,6 +97,13 @@ module.exports = {
           console.log(job.nextDates().format('YYYY-MM-DDTHH:mm:ss'),"Next time when cron will run");
 
           req.body.userid = req.user._id;
+
+          req.body.mailobj = {
+              to,
+              cc,
+              subject,
+              text
+          }
 
           req.body.sechuledAt = job.nextDates().format('YYYY-MM-DDTHH:mm:ss');
 
