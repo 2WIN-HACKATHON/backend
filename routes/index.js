@@ -162,11 +162,21 @@ router.put('/forgot-password',errorHandler(putforgotPwd));
  */
 router.put('/reset/:token',errorHandler(putReset));
 
-  // This code will take use to consent screen
+/**
+ * @swagger
+ * /login/google:
+ *   get:
+ *     description: Takes you to the consent screen for google auth
+ *     responses:
+ *       200:
+ *         description: success:true logged in
+ */
 router.get("/login/google",passport.authenticate("google",{
   scope:[        'https://www.googleapis.com/auth/userinfo.profile',
   'https://www.googleapis.com/auth/userinfo.email']
 }));
+
+
 
 router.get("/login/google/callback",errorHandler(googlelogin));
 
