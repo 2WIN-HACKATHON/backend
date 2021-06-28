@@ -27,3 +27,7 @@ Mail Scheduler Made using Nodejs,express js,Mongodb,cronjs
 
 - run npm start and app will start running  
 
+- Goto http://localhost:3000/api-docs/  
+
+- to find the list of all the api endpoints if cloned locally else https://fondbackend.herokuapp.com/api-docs
+

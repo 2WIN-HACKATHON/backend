@@ -25,7 +25,7 @@ const swaggerOptions = {
       contact: {
         name: 'bankaraj00@gmail.com',
       },
-      servers: ['http://localhost:3000']
+      servers: ['http://localhost:3000',"https://twowin.herokuapp.com"]
     },
   },
   // ['.routes/*.js']
@@ -52,7 +52,7 @@ db.once('open',function(){
   console.log("connected")
 })
 
-var whitelist = ["http://localhost:3000","https://twowin.herokuapp.com"]
+var whitelist = ["http://localhost:3000"]
 var corsOptions = {
   methods: ['GET','PUT','POST','DELETE','OPTIONS'],
   preflightContinue: false,
