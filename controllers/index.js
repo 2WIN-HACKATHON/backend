@@ -10,6 +10,7 @@ const Token = require("../model/token")
 module.exports={
    async postregister(req,res,next){
        try{
+
            const{username,email} = req.body;
            if(!req.body.password || req.body.password.length<6)
            {
@@ -40,6 +41,7 @@ module.exports={
        }
 },
     async postlogin(req,res,next){
+        console.log(req.body,"This is the req.body inside login")
         const {email,password} = req.body;
         try{
             const{user,error}  = await User.authenticate()(email,password);
