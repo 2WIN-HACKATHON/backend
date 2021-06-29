@@ -12,7 +12,7 @@ const googlestrategy = require("passport-google-oauth2").Strategy;
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const  cors = require('cors')
-let PRODUCTION = true;
+let PRODUCTION = false;
 const app = express();
 
 
@@ -61,6 +61,9 @@ var corsOptions = {
   exposedHeaders: ['Set-Cookie'],
   allowedHeaders: ['Content-Type','Authorization', 'X-HTTP-Method-Override' ,'X-Requested-With', 'device-remember-token', 'Accept'],
   origin: function (origin, callback) {
+    /* https://stackoverflow.com/questions/42589882/nodejs-cors-middleware-origin-undefined#:~:text=3%20Answers&text=This%20happens%20when%20you%20load,the%20page%20is%20being%20served.
+       reason why we put !origin
+    */
     if (!origin || whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
@@ -69,13 +72,8 @@ var corsOptions = {
     }
   }
 }
-if(PRODUCTION==false)
-{  
-  app.use(cors())
-}else{
-  console.log("In production");
-  app.use(cors(corsOptions))
-}
+ app.use(cors(corsOptions));
+ app.set('trust proxy', 1)
 
 
 // view engine setup
@@ -90,7 +88,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // passport configuration
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: "andfnondaldnfpanfpadnfpanjfps",
   resave: false,
   saveUninitialized: false,
   cookie: { 
