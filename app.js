@@ -73,6 +73,7 @@ if(PRODUCTION==false)
 {  
   app.use(cors())
 }else{
+  console.log("In production");
   app.use(cors(corsOptions))
 }
 
