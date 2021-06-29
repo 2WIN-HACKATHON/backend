@@ -52,7 +52,7 @@ db.once('open',function(){
   console.log("connected")
 })
 
-var whitelist = ["http://localhost:3000"]
+var whitelist = ["http://localhost:4000"]
 var corsOptions = {
   methods: ['GET','PUT','POST','DELETE','OPTIONS'],
   preflightContinue: false,
