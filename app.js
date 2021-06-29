@@ -91,7 +91,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: { 
+    httpOnly: false,
+    sameSite: app.get("env") === "development" ? false : 'none',
+    secure: app.get("env") === "development" ? false : true,
+    // domain:app.get("env") === "development"?"localhost":"skillmithra.herokuapp.com"
+  }
 }))
 
 
