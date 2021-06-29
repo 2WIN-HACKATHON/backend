@@ -52,7 +52,7 @@ db.once('open',function(){
   console.log("connected")
 })
 
-var whitelist = ["http://localhost:4000"]
+var whitelist = ["http://localhost:3000"]
 var corsOptions = {
   methods: ['GET','PUT','POST','DELETE','OPTIONS'],
   preflightContinue: false,
@@ -65,6 +65,7 @@ var corsOptions = {
        reason why we put !origin
     */
     if (!origin || whitelist.indexOf(origin) !== -1) {
+      console.log(origin,"This is origin");
       callback(null, true)
     } else {
       console.log(origin,"This is origin");
