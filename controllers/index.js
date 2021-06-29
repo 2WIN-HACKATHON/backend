@@ -48,6 +48,8 @@ module.exports={
             if(error)throw error
             const login =  util.promisify(req.login.bind(req));
             await login(user);
+            console.log(req,"This is the request");
+            console.log(res,"This is the response")
             return res.status(200).send({success:true,msg:"You are successfully logged in "});
         }catch(err){
             console.log(err);
